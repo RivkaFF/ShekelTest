@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ShekelModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Customer">
+    <Key>
+      <PropertyRef Name="customerId" />
+    </Key>
+    <Property Name="customerId" Type="String" MaxLength="9" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="address" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="FactoriesToCustomers" Relationship="Self.FK_FactoriesToCustomer_Customers" FromRole="Customers" ToRole="FactoriesToCustomer" />
+  </EntityType>
+  <EntityType Name="Factory">
+    <Key>
+      <PropertyRef Name="factoryCode" />
+    </Key>
+    <Property Name="groupCode" Type="Int32" Nullable="false" />
+    <Property Name="factoryCode" Type="Int32" Nullable="false" />
+    <Property Name="factoryName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Group" Relationship="Self.FK_Factories_Groups" FromRole="Factories" ToRole="Groups" />
+  </EntityType>
+  <EntityType Name="Group">
+    <Key>
+      <PropertyRef Name="groupCode" />
+    </Key>
+    <Property Name="groupCode" Type="Int32" Nullable="false" />
+    <Property Name="groupName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Factories" Relationship="Self.FK_Factories_Groups" FromRole="Groups" ToRole="Factories" />
+    <NavigationProperty Name="FactoriesToCustomers" Relationship="Self.FK_FactoriesToCustomer_Groups" FromRole="Groups" ToRole="FactoriesToCustomer" />
+  </EntityType>
+  <EntityType Name="sysdiagram">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <EntityType Name="FactoriesToCustomer">
+    <Key>
+      <PropertyRef Name="groupCode" />
+      <PropertyRef Name="factoryCode" />
+    </Key>
+    <Property Name="groupCode" Type="Int32" Nullable="false" />
+    <Property Name="factoryCode" Type="Int32" Nullable="false" />
+    <Property Name="customerId" Type="String" MaxLength="9" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Customer" Relationship="Self.FK_FactoriesToCustomer_Customers" FromRole="FactoriesToCustomer" ToRole="Customers" />
+    <NavigationProperty Name="Group" Relationship="Self.FK_FactoriesToCustomer_Groups" FromRole="FactoriesToCustomer" ToRole="Groups" />
+  </EntityType>
+  <Association Name="FK_FactoriesToCustomer_Customers">
+    <End Role="Customers" Type="Self.Customer" Multiplicity="0..1" />
+    <End Role="FactoriesToCustomer" Type="Self.FactoriesToCustomer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Customers">
+        <PropertyRef Name="customerId" />
+      </Principal>
+      <Dependent Role="FactoriesToCustomer">
+        <PropertyRef Name="customerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Factories_Groups">
+    <End Role="Groups" Type="Self.Group" Multiplicity="1" />
+    <End Role="Factories" Type="Self.Factory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Groups">
+        <PropertyRef Name="groupCode" />
+      </Principal>
+      <Dependent Role="Factories">
+        <PropertyRef Name="groupCode" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FactoriesToCustomer_Groups">
+    <End Role="Groups" Type="Self.Group" Multiplicity="1" />
+    <End Role="FactoriesToCustomer" Type="Self.FactoriesToCustomer" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Groups">
+        <PropertyRef Name="groupCode" />
+      </Principal>
+      <Dependent Role="FactoriesToCustomer">
+        <PropertyRef Name="groupCode" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="ShekelEntitities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Customers" EntityType="Self.Customer" />
+    <EntitySet Name="Factories" EntityType="Self.Factory" />
+    <EntitySet Name="Groups" EntityType="Self.Group" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+    <EntitySet Name="FactoriesToCustomers" EntityType="Self.FactoriesToCustomer" />
+    <AssociationSet Name="FK_FactoriesToCustomer_Customers" Association="Self.FK_FactoriesToCustomer_Customers">
+      <End Role="Customers" EntitySet="Customers" />
+      <End Role="FactoriesToCustomer" EntitySet="FactoriesToCustomers" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Factories_Groups" Association="Self.FK_Factories_Groups">
+      <End Role="Groups" EntitySet="Groups" />
+      <End Role="Factories" EntitySet="Factories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FactoriesToCustomer_Groups" Association="Self.FK_FactoriesToCustomer_Groups">
+      <End Role="Groups" EntitySet="Groups" />
+      <End Role="FactoriesToCustomer" EntitySet="FactoriesToCustomers" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
